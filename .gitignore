@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment (DO NOT PUSH)
+venv/
+.env/
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+
+# IDE / Editor junk
+.vscode/
+.idea/
+*.swp
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Data outputs (generated files)
+output/
+*.log
+
+# Secrets (future-proofing)
+*.env
