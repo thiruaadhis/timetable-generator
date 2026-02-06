@@ -1,42 +1,59 @@
-## AI-Based Timetable Generator (NEP 2020 Compliant)
-
+## AI-Based Timetable Generator (NEP 2020 Aligned)
 ## Project Overview
 
-This project implements a constraint-based academic timetable generator using Google OR-Tools (CP-SAT solver).
+This project implements a constraint-based university timetable generator using Google OR-Tools (CP-SAT solver).
 
-The system generates a feasible timetable from structured input data while enforcing academic and policy constraints aligned with NEP 2020 principles, including credit limits, faculty workload, and conflict prevention.
+The system generates a feasible weekly timetable from structured institutional data while enforcing academic and operational constraints such as:
 
-Input data is provided via CSV files containing:
+Student conflict prevention
 
-Course information (credits, weekly hours, faculty)
+Faculty conflict prevention
 
-Faculty details (maximum teaching load)
+Faculty workload validation
 
-Student registrations (selected courses)
+Semester credit limits
 
-The output is a conflict-free timetable saved in JSON format.
+Lab scheduling rules
+
+The generated timetable represents a single week, which repeats throughout the academic month.
+
+Input data is provided through CSV files containing:
+
+Course metadata (credits, weekly hours, faculty mapping)
+
+Faculty workload limits
+
+Student course registrations
+
+The output is exported as a structured JSON timetable.
 
 ## Current Implementation
 
 The system currently supports:
 
-CSV-based structured data loading
+Robust CSV data validation and ingestion
 
-Constraint modeling using CP-SAT
+6 working days (Monday–Saturday)
 
-Student conflict prevention
+4 periods per day
 
-Faculty scheduling conflict prevention
+Total 24 scheduling slots per week
+
+Student conflict graph construction (optimized)
+
+Faculty conflict graph construction (optimized)
+
+Lab course handling (2 consecutive periods)
 
 Faculty workload validation
 
-Semester credit limit validation (NEP-aligned bounds)
+Semester credit validation
 
 JSON timetable export
 
-Basic unit testing for solver execution
+Parallel CP-SAT solving with performance tuning
 
-The architecture is modular and extensible.
+The architecture is modular and scalable.
 
 ## Project Structure
 
@@ -57,54 +74,108 @@ output/
 
 ## System Workflow
 
-Data Loading:
-Input data is read from CSV files.
+1. Data Loading
 
-Model Construction:
-A CP-SAT model is created where each course is assigned a time slot variable.
+CSV files are validated for schema correctness.
 
-Constraint Application:
-Academic and scheduling constraints are added to the model.
+Foreign key relationships are verified.
 
-Solving:
-The solver searches for a feasible timetable.
+Student course lists are normalized.
 
-Output Generation:
-The resulting schedule is exported to output/timetable.json.
+2. Model Construction
+
+Each course is assigned a time slot variable (0–23).
+
+Lab courses are identified automatically based on weekly hours.
+
+3. Conflict Graph Construction
+
+Student conflicts are precomputed.
+
+Faculty conflicts are precomputed.
+
+Duplicate constraint creation is avoided for efficiency.
+
+4. Constraint Application
+
+The solver enforces:
+
+Student time conflicts
+
+Faculty time conflicts
+
+Lab structural constraints (2 consecutive periods)
+
+Lab cannot start in last period of day
+
+Faculty workload validation
+
+Credit bounds validation
+
+5. Solving
+
+CP-SAT solver runs with parallel workers.
+
+Time limit applied for controlled solving.
+
+6. Output Generation
+
+Weekly timetable is generated.
+
+Saved to output/timetable.json.
 
 ## Constraints Implemented
+Student Constraints
 
-Student Constraints:
+A student cannot attend overlapping courses.
 
-No overlapping courses for any student.
+Lab courses block two consecutive periods.
 
-Semester credit load must be within defined bounds:
+Semester credit load must lie within:
 
 Minimum: 16 credits
 
-Maximum: 24 credits.
+Maximum: 24 credits
 
-Faculty Constraints:
+Faculty Constraints
 
-A faculty member cannot teach multiple courses in the same time slot.
+Faculty cannot teach overlapping courses.
 
-Total assigned weekly hours must not exceed the faculty's maximum workload.
+Lab courses block two consecutive periods.
 
-Course Constraints:
+Total assigned teaching load must not exceed defined maximum hours.
 
-Each course is assigned exactly one valid time slot.
+Lab Constraints
 
-No two courses share the same slot (global uniqueness).
+Lab courses occupy two consecutive periods.
 
-Time Structure:
+Labs cannot start in the last period of a day.
 
-5 working days
+Lab conflicts are checked against both occupied periods.
 
-4 slots per day
+## Time Structure
 
-Total of 20 scheduling slots
+6 working days (Mon–Sat)
 
-Each slot is mapped to a specific day and time index.
+4 periods per day
+
+24 total weekly slots
+
+Improvements Over Initial Version
+
+Removed unrealistic global “one course per slot” constraint.
+
+Optimized conflict modeling using precomputed conflict graphs.
+
+Eliminated redundant constraint generation.
+
+Added lab structure enforcement.
+
+Improved solver performance with multi-threading.
+
+Added robust input validation layer.
+
+Ensured consistent weekly timetable logic.
 
 ## How to Run
 
@@ -126,24 +197,50 @@ python src/test_solver.py
 Example:
 
 {
-    "C1": {
+    "CSE201": {
         "day": "Mon",
-        "time": "Slot 1"
+        "period": "Period 1"
+    },
+    "ECE202": {
+        "day": "Wed",
+        "periods": ["Period 2", "Period 3"]
     }
 }
 
-## Future Work
 
-Planned enhancements include:
+Theory courses contain a single period.
+Lab courses contain two consecutive periods.
 
-Multi-slot allocation for multi-credit courses
+## What Is Not Yet Implemented
+
+The system currently focuses on hard feasibility constraints. The following enhancements are planned:
+
+Multi-slot modeling for theory courses based on full weekly hours
 
 Room allocation constraints
 
-Soft constraints (gap minimization, load balancing)
+Department/semester-level scheduling partitions
 
-Optimization objectives
+Soft constraints (minimize gaps, balance daily load)
 
-Hybrid ML + constraint-based approach
+Optimization objective functions
 
-Web interface for visualization
+Section-wise timetable generation
+
+Instructor preference modeling
+
+Graphical visualization interface
+
+## Long-Term Vision
+
+This system aims to evolve into a scalable institutional scheduling engine capable of:
+
+Supporting multi-department universities
+
+Handling realistic weekly hour allocations
+
+Incorporating room and infrastructure constraints
+
+Optimizing timetable quality
+
+Integrating hybrid ML + constraint-based optimization
