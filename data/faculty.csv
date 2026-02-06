@@ -1,22 +1,24 @@
 faculty_id,name,max_hours
-F01,Dr Rao,16
-F02,Dr Sharma,16
-F03,Dr Iyer,16
-F04,Dr Mehta,14
-F05,Dr Kapoor,14
-F06,Dr Verma,16
-F07,Dr Singh,14
-F08,Dr Das,14
-F09,Dr Kumar,14
-F10,Dr Patel,16
-F11,Dr Reddy,14
-F12,Dr Joshi,14
-F13,Dr Nair,16
-F14,Dr Menon,14
-F15,Dr Thomas,14
-F16,Dr Chandra,16
-F17,Dr Malhotra,14
-F18,Dr Banerjee,14
-F19,Dr Gupta,18
-F20,Dr Sen,12
-F21,Dr Bose,12
+F01,Dr Rao,12
+F02,Dr Sharma,12
+F03,Dr Iyer,10
+
+F06,Dr Verma,12
+F07,Dr Singh,12
+F08,Dr Das,10
+
+F10,Dr Patel,12
+F11,Dr Reddy,12
+F12,Dr Joshi,10
+
+F13,Dr Nair,12
+F14,Dr Menon,12
+F15,Dr Thomas,10
+
+F16,Dr Chandra,12
+F17,Dr Malhotra,12
+F18,Dr Banerjee,10
+
+F19,Dr Gupta,14
+F20,Dr Sen,8
+F21,Dr Bose,8
