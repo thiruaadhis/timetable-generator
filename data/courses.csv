@@ -1,0 +1,6 @@
+course_id,name,credits,weekly_hours,faculty_id
+CSE101,Data Structures,4,4,F01
+CSE102,Operating Systems,3,3,F02
+CSE103,Database Management Systems,3,3,F03
+CSE104,Computer Networks,3,3,F04
+CSE105,Software Engineering,3,2,F05
