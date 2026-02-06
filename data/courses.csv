@@ -1,29 +1,47 @@
-course_id,name,credits,weekly_hours,faculty_id
-CSE201,Algorithms,4,4,F01
-CSE202,Operating Systems,4,4,F02
-CSE203,Database Systems,4,3,F03
-CSE206,Algorithms Lab,1,2,F01
+course_id,name,credits,weekly_hours,faculty_id,type
+CSE201,Advanced Algorithms,4,3,F01,theory
+CSE202,Operating Systems Design,4,3,F02,theory
+CSE203,Database Management Systems,4,3,F03,theory
+CSE204,Computer Networks,4,3,F04,theory
+CSE205,Artificial Intelligence,4,3,F05,theory
+CSE206,Algorithms Laboratory,2,2,F01,lab
+CSE207,Operating Systems Laboratory,2,2,F02,lab
+CSE208,AI Laboratory,2,2,F05,lab
+CSE299,Honours Machine Learning,3,1,F05,honours
+CSE250,Open Elective Data Science,3,1,F06,theory
 
-ECE201,Signals and Systems,4,4,F06
-ECE202,Digital Electronics,4,3,F07
-ECE203,Communication Systems,4,3,F08
-ECE205,Electronics Lab,1,2,F07
+ECE201,Signals and Systems,4,3,F06,theory
+ECE202,Digital Electronics,4,3,F07,theory
+ECE203,Communication Systems,4,3,F08,theory
+ECE204,Embedded Systems,4,3,F09,theory
+ECE205,Electronics Laboratory,2,2,F07,lab
+ECE206,Communication Laboratory,2,2,F08,lab
+ECE299,Honours Signal Processing,3,1,F06,honours
+ECE250,Open Elective Robotics,3,1,F10,theory
 
-ME201,Thermodynamics,4,4,F10
-ME202,Fluid Mechanics,4,3,F11
-ME203,Machine Design,4,3,F12
-ME204,Mechanical Lab,1,2,F11
+ME201,Thermodynamics,4,3,F10,theory
+ME202,Fluid Mechanics,4,3,F11,theory
+ME203,Machine Design,4,3,F12,theory
+ME204,Manufacturing Processes,4,3,F23,theory
+ME205,Mechanical Systems Laboratory,2,2,F11,lab
+ME206,Manufacturing Laboratory,2,2,F23,lab
+ME299,Honours Advanced Mechanics,3,1,F12,honours
+ME250,Open Elective Sustainable Energy,3,1,F24,theory
 
-CE201,Structural Analysis,4,4,F13
-CE202,Geotechnical Engineering,4,3,F14
-CE203,Environmental Engineering,4,3,F15
-CE204,Civil Lab,1,2,F14
+CE201,Structural Analysis,4,3,F13,theory
+CE202,Geotechnical Engineering,4,3,F14,theory
+CE203,Environmental Engineering,4,3,F15,theory
+CE204,Transportation Engineering,4,3,F22,theory
+CE205,Civil Engineering Laboratory,2,2,F14,lab
+CE206,Surveying Laboratory,2,2,F15,lab
+CE299,Honours Structural Dynamics,3,1,F13,honours
+CE250,Open Elective Urban Planning,3,1,F25,theory
 
-IT201,Cloud Computing,4,3,F16
-IT202,Data Mining,4,3,F17
-IT203,Cyber Security,4,3,F18
-IT204,IT Lab,1,2,F17
-
-HS201,Engineering Mathematics,4,4,F19
-HS202,Professional Ethics,2,2,F20
-HS203,Management Principles,3,2,F21
+IT201,Cloud Computing,4,3,F16,theory
+IT202,Data Mining and Warehousing,4,3,F17,theory
+IT203,Cyber Security Principles,4,3,F18,theory
+IT204,Web Technologies,4,3,F16,theory
+IT205,Cloud Laboratory,2,2,F17,lab
+IT206,Security Laboratory,2,2,F18,lab
+IT299,Honours AI Systems,3,1,F18,honours
+IT250,Open Elective Blockchain,3,1,F26,theory

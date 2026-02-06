@@ -1,56 +1,63 @@
 import json
 from pathlib import Path
 from collections import defaultdict
+from rich.console import Console
+from rich.table import Table
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-PERIODS = ["Period 1", "Period 2", "Period 3", "Period 4"]
+PERIODS = [f"Period {i}" for i in range(1, 9)]
 
 OUTPUT_PATH = Path("output/timetable.json")
+console = Console()
 
 
 def load_timetable():
-    if not OUTPUT_PATH.exists():
-        raise FileNotFoundError("Run solver first.")
     return json.loads(OUTPUT_PATH.read_text())
 
 
 def build_grid(dept_data):
-    grid = defaultdict(lambda: defaultdict(list))
+    grid = defaultdict(lambda: defaultdict(str))
 
-    for course_id, entry in dept_data.items():
-        day = entry["day"]
-
-        if "period" in entry:
-            grid[day][entry["period"]].append(course_id)
-        else:
-            for period in entry["periods"]:
-                grid[day][period].append(f"{course_id} (Lab)")
+    for day, periods in dept_data.items():
+        for period, details in periods.items():
+            display = (
+                f"[cyan]{details['course']}[/cyan]\n"
+                f"[yellow]{details['faculty']}[/yellow]\n"
+                f"[green]{details['room']}[/green]"
+            )
+            grid[day][period] = display
 
     return grid
 
 
 def print_table(dept, grid):
-    print(f"\n========== {dept} TIMETABLE ==========\n")
+    console.rule(f"[bold magenta]{dept} WEEKLY TIMETABLE")
 
-    header = ["Day"] + PERIODS
-    print("{:<8} {:<20} {:<20} {:<20} {:<20}".format(*header))
-    print("-" * 100)
+    table = Table(show_header=True, header_style="bold blue")
+    table.add_column("Day", style="bold white", width=10)
+
+    for i in range(1, 9):
+        table.add_column(f"P{i}", justify="center", width=28)
 
     for day in DAYS:
         row = [day]
         for period in PERIODS:
-            courses = ", ".join(grid[day][period])
-            row.append(courses)
+            row.append(grid[day][period] if grid[day][period] else "[dim]---[/dim]")
+        table.add_row(*row)
 
-        print("{:<8} {:<20} {:<20} {:<20} {:<20}".format(*row))
+    console.print(table)
 
 
-def main():
+def render():
     timetable = load_timetable()
 
     for dept, dept_data in timetable.items():
         grid = build_grid(dept_data)
         print_table(dept, grid)
+
+
+def main():
+    render()
 
 
 if __name__ == "__main__":

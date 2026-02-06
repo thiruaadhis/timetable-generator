@@ -1,31 +1,26 @@
-from ortools.sat.python import cp_model
+from collections import defaultdict
 
 
-def build_student_conflict_graph(students):
-    conflict_pairs = set()
+def build_conflicts(students, courses):
+    student_conflicts = set()
 
-    for courses in students["courses"]:
-        for i in range(len(courses)):
-            for j in range(i + 1, len(courses)):
-                c1, c2 = sorted((courses[i], courses[j]))
-                conflict_pairs.add((c1, c2))
+    for course_list in students["courses"]:
+        for i in range(len(course_list)):
+            for j in range(i + 1, len(course_list)):
+                a, b = sorted((course_list[i], course_list[j]))
+                student_conflicts.add((a, b))
 
-    return conflict_pairs
-
-
-def build_faculty_conflict_graph(courses):
-    conflict_pairs = set()
-
+    faculty_conflicts = set()
     faculty_groups = courses.groupby("faculty_id")
 
     for _, group in faculty_groups:
-        course_ids = list(group["course_id"])
-        for i in range(len(course_ids)):
-            for j in range(i + 1, len(course_ids)):
-                c1, c2 = sorted((course_ids[i], course_ids[j]))
-                conflict_pairs.add((c1, c2))
+        ids = list(group["course_id"])
+        for i in range(len(ids)):
+            for j in range(i + 1, len(ids)):
+                a, b = sorted((ids[i], ids[j]))
+                faculty_conflicts.add((a, b))
 
-    return conflict_pairs
+    return student_conflicts.union(faculty_conflicts)
 
 
 def add_conflict_constraints(model, course_slots, conflict_pairs, lab_courses):
@@ -33,40 +28,55 @@ def add_conflict_constraints(model, course_slots, conflict_pairs, lab_courses):
         if c1 not in course_slots or c2 not in course_slots:
             continue
 
-        v1 = course_slots[c1]
-        v2 = course_slots[c2]
+        for s1 in course_slots[c1]:
+            for s2 in course_slots[c2]:
+                model.Add(s1 != s2)
 
-        # theory-theory
-        if c1 not in lab_courses and c2 not in lab_courses:
-            model.Add(v1 != v2)
+                if c1 in lab_courses:
+                    model.Add(s1 + 1 != s2)
 
-        # lab-theory
-        elif c1 in lab_courses and c2 not in lab_courses:
-            model.Add(v2 != v1)
-            model.Add(v2 != v1 + 1)
-
-        elif c2 in lab_courses and c1 not in lab_courses:
-            model.Add(v1 != v2)
-            model.Add(v1 != v2 + 1)
-
-        # lab-lab
-        else:
-            model.Add(v1 != v2)
-            model.Add(v1 != v2 + 1)
-            model.Add(v1 + 1 != v2)
-            model.Add(v1 + 1 != v2 + 1)
+                if c2 in lab_courses:
+                    model.Add(s2 + 1 != s1)
 
 
-def add_lab_structure_constraints(model, course_slots, lab_courses, slots_per_day):
-    for lab in lab_courses:
-        if lab in course_slots:
-            slot = course_slots[lab]
+def add_room_constraints(model, course_slots, room_vars):
+    all_slots = defaultdict(list)
 
-            # Create remainder variable
-            remainder = model.NewIntVar(0, slots_per_day - 1, f"{lab}_rem")
+    for cid in course_slots:
+        for slot in course_slots[cid]:
+            all_slots[slot].append(room_vars[cid])
 
-            # remainder = slot % slots_per_day
-            model.AddModuloEquality(remainder, slot, slots_per_day)
+    for room_list in all_slots.values():
+        if len(room_list) > 1:
+            model.AddAllDifferent(room_list)
 
-            # Prevent lab from starting at last period
-            model.Add(remainder != slots_per_day - 1)
+
+def add_fixed_slot_constraints(model, course_slots, courses):
+    for cid, slots in course_slots.items():
+        course_type = courses.loc[courses["course_id"] == cid, "type"].values[0]
+
+        for slot in slots:
+
+            # Tuesday P7 → Mentor interaction (slot 1*8+6)
+            model.Add(slot != 14)
+
+            # P8 → Only honours
+            remainder = model.NewIntVar(0, 7, f"{cid}_rem")
+            model.AddModuloEquality(remainder, slot, 8)
+
+            if course_type == "honours":
+                model.Add(remainder == 7)
+            else:
+                model.Add(remainder != 7)
+
+            # Open elective fixed slots
+            if "Open Elective" in cid:
+                model.AddAllowedAssignments(
+                    [slot],
+                    [[10], [11], [22], [30]]
+                )
+            else:
+                model.Add(slot != 10)
+                model.Add(slot != 11)
+                model.Add(slot != 22)
+                model.Add(slot != 30)

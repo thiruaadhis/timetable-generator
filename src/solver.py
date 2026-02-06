@@ -4,91 +4,111 @@ import constraints
 import json
 import os
 from collections import defaultdict
+import timetable_test
+
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-SLOTS_PER_DAY = 4
-TOTAL_SLOTS = len(DAYS) * SLOTS_PER_DAY
+SLOTS_PER_DAY = 8
+TOTAL_SLOTS = 48
 
 
 def slot_to_time(slot):
     day = DAYS[slot // SLOTS_PER_DAY]
-    time = slot % SLOTS_PER_DAY
-    return day, f"Period {time+1}"
+    period = slot % SLOTS_PER_DAY
+    return day, f"Period {period+1}"
 
 
 def main():
-    courses, faculty, students = load_data()
-
+    courses, faculty, students, rooms = load_data()
     model = cp_model.CpModel()
 
-    # Identify labs (2-period courses)
-    lab_courses = set(
-        courses[courses["weekly_hours"] == 2]["course_id"]
-    )
+    lab_courses = set(courses[courses["type"] == "lab"]["course_id"])
 
-    # Create decision variables
-    course_slots = {
-        row["course_id"]: model.NewIntVar(0, TOTAL_SLOTS - 1, row["course_id"])
-        for _, row in courses.iterrows()
-    }
+    course_slots = {}
+    room_vars = {}
 
-    # Build conflict graphs
-    student_conflicts = constraints.build_student_conflict_graph(students)
-    faculty_conflicts = constraints.build_faculty_conflict_graph(courses)
+    for _, row in courses.iterrows():
+        cid = row["course_id"]
+        hours = row["weekly_hours"]
 
-    all_conflicts = student_conflicts.union(faculty_conflicts)
+        if cid in lab_courses:
+            start = model.NewIntVar(0, TOTAL_SLOTS - 2, f"{cid}_start")
+            course_slots[cid] = [start]
 
-    # Add constraints
+        else:
+            course_slots[cid] = [
+                model.NewIntVar(0, TOTAL_SLOTS - 1, f"{cid}_{i}")
+                for i in range(hours)
+            ]
+            model.AddAllDifferent(course_slots[cid])
+
+        room_vars[cid] = model.NewIntVar(0, len(rooms) - 1, f"{cid}_room")
+
+    conflicts = constraints.build_conflicts(students, courses)
+
     constraints.add_conflict_constraints(
         model,
         course_slots,
-        all_conflicts,
+        conflicts,
         lab_courses
     )
 
-    constraints.add_lab_structure_constraints(
+    constraints.add_room_constraints(
         model,
         course_slots,
-        lab_courses,
-        SLOTS_PER_DAY
+        room_vars
+    )
+
+    constraints.add_fixed_slot_constraints(
+        model,
+        course_slots,
+        courses
     )
 
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 10
+    solver.parameters.max_time_in_seconds = 30
     solver.parameters.num_search_workers = 8
 
     status = solver.Solve(model)
 
-    if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        print("No feasible solution.")
+        return
 
-        timetable = defaultdict(dict)
+    timetable = defaultdict(dict)
 
-        for course_id, var in course_slots.items():
-            slot = solver.Value(var)
-            day, time = slot_to_time(slot)
+    for cid in course_slots:
+        slots = course_slots[cid]
+        faculty_name = faculty.loc[
+            faculty["faculty_id"] ==
+            courses.loc[courses["course_id"] == cid, "faculty_id"].values[0],
+            "name"
+        ].values[0]
 
-            dept = course_id[:3]  # safer and cleaner
+        dept = cid[:3]
 
-            if course_id in lab_courses:
-                _, time2 = slot_to_time(slot + 1)
-                timetable[dept][course_id] = {
-                    "day": day,
-                    "periods": [time, time2]
-                }
-            else:
-                timetable[dept][course_id] = {
-                    "day": day,
-                    "period": time
-                }
+        for slot_var in slots:
+            slot = solver.Value(slot_var)
+            day, period = slot_to_time(slot)
 
-        os.makedirs("output", exist_ok=True)
-        with open("output/timetable.json", "w") as f:
-            json.dump(timetable, f, indent=4)
+            timetable[dept].setdefault(day, {})
+            timetable[dept][day][period] = {
+                "course": courses.loc[
+                    courses["course_id"] == cid,
+                    "name"
+                ].values[0],
+                "faculty": faculty_name,
+                "room": rooms.iloc[
+                    solver.Value(room_vars[cid])
+                ]["room_id"]
+            }
 
-        print("Department-wise timetable generated.")
+    os.makedirs("output", exist_ok=True)
+    with open("output/timetable.json", "w") as f:
+        json.dump(timetable, f, indent=4)
 
-    else:
-        print("No feasible solution found.")
+    print("Timetable generated.\n")
+    timetable_test.render()
 
 
 if __name__ == "__main__":
