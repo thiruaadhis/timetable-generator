@@ -64,3 +64,35 @@ def add_credit_constraints(students, courses):
             raise ValueError(
                 f"Student {s['student_id']} violates NEP credit limits!"
             )
+
+
+def add_faculty_daily_load_constraint(
+        # enforces that no faculty teaches more than their max hours in a single day
+    model, course_slots, courses, faculty, days, slots_per_day
+):
+    for _, f in faculty.iterrows():
+        faculty_id = f["faculty_id"]
+        max_per_day = f["max_hours"]  # treat as per-day limit
+
+        faculty_courses = courses[courses["faculty_id"] == faculty_id]
+
+        for d in range(len(days)):
+            daily_classes = []
+
+            for _, c in faculty_courses.iterrows():
+                cid = c["course_id"]
+                if cid not in course_slots:
+                    continue
+
+                # Boolean: is this course on day d?
+                on_day = model.NewBoolVar(f"{cid}_day_{d}")
+
+                slot = course_slots[cid]
+
+                model.Add(slot // slots_per_day == d).OnlyEnforceIf(on_day)
+                model.Add(slot // slots_per_day != d).OnlyEnforceIf(on_day.Not())
+
+                daily_classes.append(on_day)
+
+            if daily_classes:
+                model.Add(sum(daily_classes) <= max_per_day)
