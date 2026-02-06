@@ -1,66 +1,72 @@
 from ortools.sat.python import cp_model
 
 
-TOTAL_SLOTS = 20  # 5 days × 4 slots
+def build_student_conflict_graph(students):
+    conflict_pairs = set()
 
-
-def add_basic_constraints(model, course_slots):
-    # No two courses in same slot
-    model.AddAllDifferent(course_slots.values())
-
-
-def add_student_constraints(model, course_slots, students):
-    for _, row in students.iterrows():
-        courses = row["courses"]
-
+    for courses in students["courses"]:
         for i in range(len(courses)):
             for j in range(i + 1, len(courses)):
-                c1 = courses[i]
-                c2 = courses[j]
+                c1, c2 = sorted((courses[i], courses[j]))
+                conflict_pairs.add((c1, c2))
 
-                if c1 in course_slots and c2 in course_slots:
-                    model.Add(course_slots[c1] != course_slots[c2])
-
-
-def add_faculty_constraints(model, course_slots, courses, faculty):
-    for _, f in faculty.iterrows():
-        faculty_courses = courses[courses["faculty_id"] == f["faculty_id"]]
-
-        assigned = []
-
-        for _, c in faculty_courses.iterrows():
-            course_id = c["course_id"]
-            if course_id in course_slots:
-                assigned.append(course_slots[course_id])
-
-        if len(assigned) > 1:
-            model.AddAllDifferent(assigned)
+    return conflict_pairs
 
 
-def add_faculty_workload_constraint(model, courses, faculty):
-    # NEP-style reasonable workload constraint
-    for _, f in faculty.iterrows():
-        faculty_courses = courses[courses["faculty_id"] == f["faculty_id"]]
+def build_faculty_conflict_graph(courses):
+    conflict_pairs = set()
 
-        total_hours = faculty_courses["weekly_hours"].sum()
+    faculty_groups = courses.groupby("faculty_id")
 
-        if total_hours > f["max_hours"]:
-            raise ValueError(
-                f"Faculty {f['faculty_id']} exceeds max workload!"
-            )
+    for _, group in faculty_groups:
+        course_ids = list(group["course_id"])
+        for i in range(len(course_ids)):
+            for j in range(i + 1, len(course_ids)):
+                c1, c2 = sorted((course_ids[i], course_ids[j]))
+                conflict_pairs.add((c1, c2))
+
+    return conflict_pairs
 
 
-def add_credit_constraints(students, courses):
-    # NEP 2020 typical semester credit bounds
-    MIN_CREDITS = 16
-    MAX_CREDITS = 24
+def add_conflict_constraints(model, course_slots, conflict_pairs, lab_courses):
+    for c1, c2 in conflict_pairs:
+        if c1 not in course_slots or c2 not in course_slots:
+            continue
 
-    course_credit_map = dict(zip(courses["course_id"], courses["credits"]))
+        v1 = course_slots[c1]
+        v2 = course_slots[c2]
 
-    for _, s in students.iterrows():
-        total = sum(course_credit_map[c] for c in s["courses"] if c in course_credit_map)
+        # theory-theory
+        if c1 not in lab_courses and c2 not in lab_courses:
+            model.Add(v1 != v2)
 
-        if total < MIN_CREDITS or total > MAX_CREDITS:
-            raise ValueError(
-                f"Student {s['student_id']} violates NEP credit limits!"
-            )
+        # lab-theory
+        elif c1 in lab_courses and c2 not in lab_courses:
+            model.Add(v2 != v1)
+            model.Add(v2 != v1 + 1)
+
+        elif c2 in lab_courses and c1 not in lab_courses:
+            model.Add(v1 != v2)
+            model.Add(v1 != v2 + 1)
+
+        # lab-lab
+        else:
+            model.Add(v1 != v2)
+            model.Add(v1 != v2 + 1)
+            model.Add(v1 + 1 != v2)
+            model.Add(v1 + 1 != v2 + 1)
+
+
+def add_lab_structure_constraints(model, course_slots, lab_courses, slots_per_day):
+    for lab in lab_courses:
+        if lab in course_slots:
+            slot = course_slots[lab]
+
+            # Create remainder variable
+            remainder = model.NewIntVar(0, slots_per_day - 1, f"{lab}_rem")
+
+            # remainder = slot % slots_per_day
+            model.AddModuloEquality(remainder, slot, slots_per_day)
+
+            # Prevent lab from starting at last period
+            model.Add(remainder != slots_per_day - 1)

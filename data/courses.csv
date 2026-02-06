@@ -1,6 +1,27 @@
 course_id,name,credits,weekly_hours,faculty_id
-CSE101,Data Structures,4,4,F01
-CSE102,Operating Systems,3,3,F02
-CSE103,Database Management Systems,3,3,F03
-CSE104,Computer Networks,3,3,F04
-CSE105,Software Engineering,3,2,F05
+CSE201,Algorithms,4,4,F01
+CSE202,Operating Systems,4,4,F02
+CSE203,Database Systems,4,3,F03
+CSE204,Computer Networks,4,3,F04
+CSE205,Machine Learning,4,3,F05
+
+ECE201,Signals and Systems,4,4,F06
+ECE202,Digital Electronics,4,3,F07
+ECE203,Communication Systems,4,3,F08
+ECE204,Embedded Systems,4,3,F09
+
+ME201,Thermodynamics,4,4,F10
+ME202,Fluid Mechanics,4,3,F11
+ME203,Machine Design,4,3,F12
+
+CE201,Structural Analysis,4,4,F13
+CE202,Geotechnical Engineering,4,3,F14
+CE203,Environmental Engineering,4,3,F15
+
+IT201,Cloud Computing,4,3,F16
+IT202,Data Mining,4,3,F17
+IT203,Cyber Security,4,3,F18
+
+HS201,Engineering Mathematics,4,4,F19
+HS202,Professional Ethics,2,2,F20
+HS203,Management Principles,3,2,F21
