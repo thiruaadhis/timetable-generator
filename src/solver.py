@@ -3,9 +3,9 @@ from load_data import load_data
 import constraints
 import json
 
-DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 SLOTS_PER_DAY = 4
-TOTAL_SLOTS = 20
+TOTAL_SLOTS = len(DAYS) * SLOTS_PER_DAY
 
 
 def slot_to_time(slot):
