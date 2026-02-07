@@ -1,47 +1,40 @@
 course_id,name,credits,weekly_hours,faculty_id,type
-CSE201,Advanced Algorithms,4,3,F01,theory
-CSE202,Operating Systems Design,4,3,F02,theory
-CSE203,Database Management Systems,4,3,F03,theory
-CSE204,Computer Networks,4,3,F04,theory
-CSE205,Artificial Intelligence,4,3,F05,theory
-CSE206,Algorithms Laboratory,2,2,F01,lab
-CSE207,Operating Systems Laboratory,2,2,F02,lab
-CSE208,AI Laboratory,2,2,F05,lab
-CSE299,Honours Machine Learning,3,1,F05,honours
-CSE250,Open Elective Data Science,3,1,F06,theory
+CSE101,Programming Fundamentals,4,3,F01,theory
+CSE102,Data Structures,4,3,F02,theory
+CSE103,Computer Architecture,4,3,F03,theory
+CSE104,Discrete Mathematics,4,3,F04,theory
+CSE105L,Programming Laboratory,2,2,F01,lab
+CSE190H,Honours Advanced Programming,3,1,F02,honours
+OE201,Open Elective Blockchain Basics,3,1,F20,theory
 
-ECE201,Signals and Systems,4,3,F06,theory
-ECE202,Digital Electronics,4,3,F07,theory
-ECE203,Communication Systems,4,3,F08,theory
-ECE204,Embedded Systems,4,3,F09,theory
-ECE205,Electronics Laboratory,2,2,F07,lab
-ECE206,Communication Laboratory,2,2,F08,lab
-ECE299,Honours Signal Processing,3,1,F06,honours
-ECE250,Open Elective Robotics,3,1,F10,theory
+ECE101,Circuit Theory,4,3,F05,theory
+ECE102,Electronic Devices,4,3,F06,theory
+ECE103,Signals and Systems,4,3,F07,theory
+ECE104,Digital Logic Design,4,3,F08,theory
+ECE105L,Circuits Laboratory,2,2,F05,lab
+ECE190H,Honours VLSI Design,3,1,F08,honours
+OE202,Open Elective IoT Fundamentals,3,1,F21,theory
 
-ME201,Thermodynamics,4,3,F10,theory
-ME202,Fluid Mechanics,4,3,F11,theory
-ME203,Machine Design,4,3,F12,theory
-ME204,Manufacturing Processes,4,3,F23,theory
-ME205,Mechanical Systems Laboratory,2,2,F11,lab
-ME206,Manufacturing Laboratory,2,2,F23,lab
-ME299,Honours Advanced Mechanics,3,1,F12,honours
-ME250,Open Elective Sustainable Energy,3,1,F24,theory
+ME201,Thermodynamics,4,3,F09,theory
+ME202,Fluid Mechanics,4,3,F10,theory
+ME203,Manufacturing Processes,4,3,F11,theory
+ME204,Mechanics of Materials,4,3,F12,theory
+ME205L,Manufacturing Laboratory,2,2,F11,lab
+ME290H,Honours Robotics,3,1,F12,honours
+OE203,Open Elective Sustainable Energy,3,1,F22,theory
 
-CE201,Structural Analysis,4,3,F13,theory
+CE201,Structural Engineering,4,3,F13,theory
 CE202,Geotechnical Engineering,4,3,F14,theory
-CE203,Environmental Engineering,4,3,F15,theory
-CE204,Transportation Engineering,4,3,F22,theory
-CE205,Civil Engineering Laboratory,2,2,F14,lab
-CE206,Surveying Laboratory,2,2,F15,lab
-CE299,Honours Structural Dynamics,3,1,F13,honours
-CE250,Open Elective Urban Planning,3,1,F25,theory
+CE203,Hydraulics,4,3,F15,theory
+CE204,Construction Management,4,3,F16,theory
+CE205L,Surveying Laboratory,2,2,F14,lab
+CE290H,Honours Seismic Design,3,1,F13,honours
+OE204,Open Elective Smart Cities,3,1,F23,theory
 
-IT201,Cloud Computing,4,3,F16,theory
-IT202,Data Mining and Warehousing,4,3,F17,theory
-IT203,Cyber Security Principles,4,3,F18,theory
-IT204,Web Technologies,4,3,F16,theory
-IT205,Cloud Laboratory,2,2,F17,lab
-IT206,Security Laboratory,2,2,F18,lab
-IT299,Honours AI Systems,3,1,F18,honours
-IT250,Open Elective Blockchain,3,1,F26,theory
+IT201,Web Development,4,3,F17,theory
+IT202,Database Systems,4,3,F18,theory
+IT203,Network Security,4,3,F19,theory
+IT204,Cloud Computing,4,3,F17,theory
+IT205L,Web Development Laboratory,2,2,F17,lab
+IT290H,Honours AI & ML,3,1,F19,honours
+OE205,Open Elective Quantum Computing,3,1,F24,theory

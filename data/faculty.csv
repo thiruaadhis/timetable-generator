@@ -1,31 +1,25 @@
 faculty_id,name,max_hours
-F01,Dr Rao,18
-F02,Dr Sharma,18
-F03,Dr Iyer,18
-F04,Dr Mehta,16
-F05,Dr Kapoor,16
-F06,Dr Verma,18
-F07,Dr Singh,16
-F08,Dr Das,16
-F09,Dr Kumar,16
-F10,Dr Patel,18
-F11,Dr Reddy,16
-F12,Dr Joshi,16
-F13,Dr Nair,18
-F14,Dr Menon,16
-F15,Dr Thomas,16
-F16,Dr Chandra,18
-F17,Dr Malhotra,16
-F18,Dr Banerjee,16
-F19,Dr Gupta,18
-F20,Dr Sen,14
-F21,Dr Bose,14
-F22,Dr Fernandes,16
-F23,Dr Kulkarni,16
-F24,Dr Arvind,16
-F25,Dr Lakshmi,16
-F26,Dr Priya,16
-F27,Dr Anand,16
-F28,Dr Vivek,16
-F29,Dr Kavya,16
-F30,Dr Arjun,16
+F01,Dr Rajesh Kumar,18
+F02,Dr Priya Singh,18
+F03,Dr Anil Sharma,16
+F04,Dr Kavita Reddy,16
+F05,Dr Suresh Nair,18
+F06,Dr Meena Iyer,16
+F07,Dr Vikram Patel,16
+F08,Dr Anjali Desai,18
+F09,Dr Ravi Menon,16
+F10,Dr Lakshmi Rao,18
+F11,Dr Karthik Joshi,16
+F12,Dr Divya Kulkarni,16
+F13,Dr Arjun Mehta,18
+F14,Dr Shalini Thomas,16
+F15,Dr Nikhil Verma,16
+F16,Dr Pooja Gupta,16
+F17,Dr Amit Chandra,18
+F18,Dr Sneha Malhotra,16
+F19,Dr Rahul Banerjee,18
+F20,Dr Ishaan Das,14
+F21,Dr Nisha Kapoor,14
+F22,Dr Vivek Fernandes,14
+F23,Dr Aditi Sen,14
+F24,Dr Rohan Bose,14
